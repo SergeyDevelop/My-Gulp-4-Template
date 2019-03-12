@@ -1,0 +1,1 @@
+let testy = (x)=> x*x;

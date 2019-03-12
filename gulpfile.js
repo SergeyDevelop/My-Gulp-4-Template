@@ -9,6 +9,7 @@ var del = require('del');
 var imagemin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
 var cache = require('gulp-cache');
+var babel = require("gulp-babel");
 
 
 
@@ -75,8 +76,15 @@ gulp.task('buildLibs',function(){
     return gulp.src('app/libs/**/*')
     .pipe(gulp.dest('dist/libs'));
 });
-gulp.task('buildJs',function(){
-    return gulp.src('app/js/**/*')
+gulp.task("babelJS", function () {
+    return gulp.src("app/js/**/*")
+      .pipe(babel({
+        presets: ['@babel/preset-env']
+    }))
+      .pipe(gulp.dest("dist/js"));
+  });
+gulp.task('uglifyJs',function(){
+    return gulp.src('dist/js/**/*')
     .pipe(uglify())
     .pipe(gulp.dest('dist/js')) ;
 });
@@ -85,7 +93,7 @@ gulp.task('buildHtml',function(){
     .pipe(gulp.dest('dist'));
 });
     
-gulp.task('build',gulp.series('clean','img','sass','buildCss','buildFonts','buildLibs','buildJs','buildHtml'));
+gulp.task('build',gulp.series('clean','img','sass','buildCss','buildFonts','buildLibs','babelJS','uglifyJs','buildHtml'));
 
 gulp.task('default',gulp.parallel('watch','browserSync'));
 
